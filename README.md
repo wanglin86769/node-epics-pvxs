@@ -12,6 +12,8 @@ npm install node-epics-pvxs
 
 Requires Node.js >= 18. Published builds include `prebuilds/` for **win32-x64**, **linux-x64**, and **darwin-x64** (no compiler needed).
 
+Linux prebuilds need **glibc >= 2.32** (e.g. Debian 12, Ubuntu 22.04+). Older systems such as Debian 10 will fail to load (`GLIBC_2.32 not found`); use a newer OS or [build from source](#build-from-source) on that machine.
+
 ## Quick start
 
 ### Client
