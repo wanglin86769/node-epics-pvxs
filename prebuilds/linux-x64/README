@@ -1,0 +1,64 @@
+# prebuilds/linux-x64
+
+Node tag: `linux` + `x64` (Linux x86_64).
+Typical EPICS copy source: `linux-x86_64`.
+
+## Build environment (fill in when packaging)
+
+- OS:
+- gcc/g++ / Node:
+- EPICS base: 7.0.10
+- pvxs: 1.5.2
+- libevent: 2.1
+
+Runtime loads `pvxs.node` **only** from this directory (not `build/Release`).
+After copy, run `normalize-linux-libs.sh` to shorten sonames, rewrite NEEDED/SONAME, and set `$ORIGIN`.
+
+## Files to copy here
+
+From `npm run build`:
+
+- `./build/Release/pvxs.node`
+
+From EPICS / pvxs / libevent (versioned names are OK; the script renames them):
+
+- `libpvxs.so.1.5` (or `libpvxs.so`)
+- `libCom.so.3.25.0` (or `libCom.so`)
+- `libevent_core-2.1.so.7.0.1` (or `libevent_core-2.1.so.7`)
+- `libevent_pthreads-2.1.so.7.0.1` (or `libevent_pthreads-2.1.so.7`)
+
+Search hints: `pvxs/lib/<arch>`, `base/lib/<arch>`, `pvxs/bundle/usr/<arch>/lib`.
+
+After the script, the directory should contain short names only:
+
+- `pvxs.node`
+- `libpvxs.so`
+- `libCom.so`
+- `libevent_core.so`
+- `libevent_pthreads.so`
+
+## Fix library paths
+
+Requires `patchelf`. From this directory:
+
+```bash
+cd prebuilds/linux-x64
+bash ../../scripts/normalize-linux-libs.sh
+```
+
+The script will:
+
+1. Rename versioned `.so` files to short names
+2. `patchelf --replace-needed` (match your `readelf -d` NEEDED entries)
+3. `patchelf --set-soname` on each bundled library
+4. `patchelf --set-rpath '$ORIGIN'` on `pvxs.node` and each `.so`
+
+If your EPICS build uses different version suffixes, edit the rename/`replace-needed` lists in the script.
+
+## Self-test
+
+From the package root (after `normalize-linux-libs.sh`; no `LD_LIBRARY_PATH`):
+
+```bash
+node -e "console.log(require('.').version())"
+```

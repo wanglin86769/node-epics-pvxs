@@ -1,0 +1,14 @@
+node_modules/
+build/
+
+# Local machine config
+config/epics-paths.js
+
+# IDE
+.idea/
+.vscode/
+
+# Noise
+*.log
+.DS_Store
+Thumbs.db

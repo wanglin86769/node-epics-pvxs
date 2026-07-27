@@ -1,0 +1,70 @@
+# prebuilds/darwin-x64
+
+Node tag: `darwin` + `x64` (macOS x86_64 / Intel).
+Typical EPICS copy source: `darwin-x86` (some trees use `darwin-x86_64`).
+
+## Build environment (fill in when packaging)
+
+- OS:
+- Apple clang / Node:
+- EPICS base: 7.0.10
+- pvxs: 1.5.2
+- libevent: 2.1
+
+Runtime loads `pvxs.node` **only** from this directory (not `build/Release`).
+Runtime does **not** set `DYLD_LIBRARY_PATH`.
+After copy, run `normalize-macos-libs.sh` to shorten names and rewrite paths to `@loader_path`.
+
+Confirm arch matches this tag (`node -p process.arch` should be `x64` for Intel builds).
+
+## Files to copy here
+
+From `npm run build`:
+
+- `./build/Release/pvxs.node`
+
+From EPICS / pvxs / libevent (versioned names are OK; the script renames them):
+
+- `libpvxs.1.5.dylib` (or `libpvxs.dylib`)
+- `libCom.3.25.0.dylib` (or `libCom.dylib`)
+- `libevent_core-2.1.7.dylib` (or `libevent_core.dylib`)
+- `libevent_pthreads-2.1.7.dylib` (or `libevent_pthreads.dylib`)
+
+Search hints: `pvxs/lib/<arch>`, `base/lib/<arch>`, `pvxs/bundle/usr/<arch>/lib`.
+
+After the script, the directory should contain short names only:
+
+- `pvxs.node`
+- `libpvxs.dylib`
+- `libCom.dylib`
+- `libevent_core.dylib`
+- `libevent_pthreads.dylib`
+
+## Fix library paths
+
+Requires Xcode CLT (`install_name_tool`, `otool`). From this directory:
+
+```bash
+cd prebuilds/darwin-x64
+bash ../../scripts/normalize-macos-libs.sh
+```
+
+The script will:
+
+1. Rename versioned `.dylib` files to short names
+2. `install_name_tool -id '@loader_path/<name>'` on each bundled library
+3. Rewrite absolute / versioned dependency paths to `@loader_path/<short>` on `pvxs.node` and each `.dylib` (based on `otool -L`)
+
+## Self-test
+
+From the package root (after `normalize-macos-libs.sh`; no `DYLD_LIBRARY_PATH`):
+
+```bash
+node -e "console.log(require('.').version())"
+```
+
+Recheck deps (should show no `/Users/.../epics/...` paths):
+
+```bash
+otool -L prebuilds/darwin-x64/pvxs.node prebuilds/darwin-x64/*.dylib
+```

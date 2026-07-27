@@ -1,0 +1,67 @@
+{
+  "name": "node-epics-pvxs",
+  "version": "0.1.0",
+  "description": "EPICS PVAccess client and server for Node.js",
+  "keywords": [
+    "EPICS",
+    "pvAccess",
+    "PVA",
+    "pvxs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wanglin86769/node-epics-pvxs.git"
+  },
+  "author": "Lin Wang",
+  "license": "MIT",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "binding.gyp",
+    "config/epics-paths.example.js",
+    "src/",
+    "lib/",
+    "prebuilds/",
+    "examples/",
+    "scripts/resolve-epics-paths.js",
+    "LICENSE.txt"
+  ],
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "rebuild": "node-gyp rebuild",
+    "clean": "node-gyp clean",
+    "test": "node test/version.test.js && node test/value.test.js && node test/client-monitor.test.js && node test/client.test.js && node test/server.test.js",
+    "example:server-mailbox": "node examples/server-mailbox.js",
+    "example:server-readonly": "node examples/server-readonly.js",
+    "example:server-rpc": "node examples/server-rpc.js",
+    "example:server-post": "node examples/server-post.js",
+    "example:server-put-error": "node examples/server-put-error.js",
+    "example:server-static-source": "node examples/server-static-source.js",
+    "example:server-type-scalar": "node examples/server-type-scalar.js",
+    "example:server-type-array": "node examples/server-type-array.js",
+    "example:server-type-enum": "node examples/server-type-enum.js",
+    "example:server-type-struct": "node examples/server-type-struct.js",
+    "example:client-get": "node examples/client-get.js",
+    "example:client-put": "node examples/client-put.js",
+    "example:client-put-many": "node examples/client-put-many.js",
+    "example:client-rpc": "node examples/client-rpc.js",
+    "example:client-monitor": "node examples/client-monitor.js",
+    "example:client-monitor-callback": "node examples/client-monitor-callback.js",
+    "example:client-list": "node examples/client-list.js",
+    "example:client-discover": "node examples/client-discover.js",
+    "example:client-config": "node examples/client-config.js"
+  },
+  "gypfile": false,
+  "dependencies": {
+    "node-addon-api": "^8.9.0"
+  },
+  "devDependencies": {
+    "node-epics-pvxs": "file:.",
+    "node-gyp": "^11.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
